@@ -1,20 +1,35 @@
 const nodemailer = require('nodemailer');
 
 // Email configuration
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: process.env.SMTP_PORT || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER || 'escutechsolutions@gmail.com',
-    pass: process.env.SMTP_PASS || 'osso eyxm avln jpic'
+let transporter = null;
+
+function getTransporter() {
+  if (!transporter) {
+    try {
+      transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: process.env.SMTP_PORT || 587,
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER || 'escutechsolutions@gmail.com',
+          pass: process.env.SMTP_PASS || 'osso eyxm avln jpic'
+        }
+      });
+    } catch (error) {
+      console.error('Error initializing email transporter:', error);
+      return null;
+    }
   }
-});
+  return transporter;
+}
 
 // Send verification email
 async function sendVerificationEmail(email, code) {
   try {
-    await transporter.sendMail({
+    const transport = getTransporter();
+    if (!transport) return false;
+    
+    await transport.sendMail({
       from: process.env.SMTP_FROM || 'escutechsolutions@gmail.com',
       to: email,
       subject: '🔐 Código de Verificación - SUPER LOGISTICA',
@@ -64,7 +79,10 @@ async function sendVerificationEmail(email, code) {
 // Send welcome email
 async function sendWelcomeEmail(email, name) {
   try {
-    await transporter.sendMail({
+    const transport = getTransporter();
+    if (!transport) return false;
+    
+    await transport.sendMail({
       from: process.env.SMTP_FROM || 'escutechsolutions@gmail.com',
       to: email,
       subject: '¡Bienvenido a SUPER LOGISTICA!',
@@ -119,8 +137,11 @@ async function sendWelcomeEmail(email, name) {
 // Send bulk email
 async function sendBulkEmail(recipients, subject, htmlContent) {
   try {
+    const transport = getTransporter();
+    if (!transport) return false;
+    
     for (const email of recipients) {
-      await transporter.sendMail({
+      await transport.sendMail({
         from: process.env.SMTP_FROM || 'escutechsolutions@gmail.com',
         to: email,
         subject: subject,
@@ -138,5 +159,5 @@ module.exports = {
   sendVerificationEmail,
   sendWelcomeEmail,
   sendBulkEmail,
-  transporter
+  getTransporter
 };

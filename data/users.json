@@ -1,0 +1,32 @@
+[
+  {
+    "id": "admin_001",
+    "email": "admin@superlogistica.com",
+    "password": "$2b$10$kjc3ynTGRh.chuJt40zEWeGdnph/r7nbyyw4XSDS4lbHm0ws0Kggi",
+    "name": "Administrador",
+    "role": "admin",
+    "verified": true,
+    "status": "active",
+    "createdAt": "2026-05-06T21:56:21.130Z"
+  },
+  {
+    "id": "user_001",
+    "email": "cliente@superlogistica.com",
+    "password": "$2b$10$kjc3ynTGRh.chuJt40zEWe.qibnVKIgHppPzf01YODRqwrh/tavLm",
+    "name": "Juan Cliente",
+    "role": "user",
+    "verified": true,
+    "status": "active",
+    "createdAt": "2026-05-06T21:56:21.130Z"
+  },
+  {
+    "id": "employee_001",
+    "email": "empleado@superlogistica.com",
+    "password": "$2b$10$kjc3ynTGRh.chuJt40zEWebMz4b9yCPw0IvmjIiAuOi7DVzFIGLoi",
+    "name": "Carlos Empleado",
+    "role": "employee",
+    "verified": true,
+    "status": "active",
+    "createdAt": "2026-05-06T21:56:21.130Z"
+  }
+]
