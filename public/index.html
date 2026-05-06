@@ -3,76 +3,158 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SUPER LOGIS CTG - Dashboard</title>
+    <title>SUPER LOGIS CTG - Dashboard de Logística</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
-  <body class="bg-light">
-    <nav class="navbar navbar-expand-lg" style="background:#0b2b45;color:#fff;">
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-corporate">
       <div class="container-fluid">
-        <a class="navbar-brand text-white d-flex align-items-center" href="#">
-          <img src="/assets/logo.png" alt="SUPER LOGIS CTG" style="height:40px;margin-right:10px;object-fit:contain"> 
-          <span>SUPER LOGIS CTG</span>
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <img src="/assets/logo.png" alt="SUPER LOGIS CTG" class="logo-navbar"> 
+          <span class="brand-text">GESTORES LOGÍSTICOS</span>
         </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="#inicio">INICIO</a></li>
+            <li class="nav-item"><a class="nav-link" href="#nosotros">NOSOTROS</a></li>
+            <li class="nav-item"><a class="nav-link" href="#dashboard">PANEL</a></li>
+            <li class="nav-item"><a class="nav-link" href="#seguimiento">RASTREO</a></li>
+            <li class="nav-item"><a class="nav-link btn-contacto" href="#contacto">CONTACTO</a></li>
+          </ul>
+        </div>
       </div>
     </nav>
 
-    <div class="container my-4">
-      <div class="row mb-3">
-        <div class="col-md-8">
-          <div class="card p-3">
-            <h5>Panel de Control</h5>
-            <div class="row text-center mt-3" id="metricsRow">
-              <!-- metrics cards here -->
+    <!-- Hero Section -->
+    <section class="hero-section" id="inicio">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-lg-6 hero-content">
+            <div class="badge-hero">LÍDERES EN LOGÍSTICA</div>
+            <h1 class="hero-title">EFICIENCIA SIN LÍMITES,<br><span class="text-highlight">LOGÍSTICA SIN FRONTERAS</span></h1>
+            <p class="hero-subtitle">En SUPER LOGISTICA, redefinimos la excelencia en transporte, almacenamiento y distribución. Soluciones estratégicas de alto rendimiento para un mercado global.</p>
+            <div class="search-box mt-4">
+              <label class="search-label">RASTREA TU ENVÍO</label>
+              <div class="input-group">
+                <input type="text" id="searchTrackingInput" class="form-control" placeholder="Ingresa tu número de guía">
+                <button class="btn btn-search" id="searchTrackingBtn">RASTREAR</button>
+              </div>
             </div>
-            <canvas id="weeklyChart" class="mt-3" height="100"></canvas>
           </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card p-3">
-            <h6>Acciones</h6>
-            <p class="small">Usa la tabla de Seguimiento para buscar por guía y actualizar estados.</p>
+          <div class="col-lg-6 hero-image">
+            <img src="/assets/logo.png" alt="SUPER LOGIS CTG" class="logo-hero">
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="row">
-        <div class="col-12">
-          <div class="card p-3 mb-3">
-            <h5>Seguimiento de Órdenes</h5>
-            <div class="mb-2 d-flex">
-              <input id="searchInput" class="form-control me-2" placeholder="Buscar por número de guía o cliente" />
-              <button id="searchBtn" class="btn btn-primary">Buscar</button>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-striped" id="shipmentsTable">
-                <thead>
-                  <tr>
-                    <th>Guía</th>
-                    <th>Cliente</th>
-                    <th>Conductor</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
+    <!-- Dashboard Section -->
+    <section class="dashboard-section" id="dashboard">
+      <div class="container-fluid">
+        <h2 class="section-title">PANEL DE CONTROL</h2>
+        
+        <!-- Metrics Cards -->
+        <div class="row mb-4" id="metricsRow">
+          <!-- metrics cards dynamically injected -->
+        </div>
+
+        <!-- Weekly Chart -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card chart-card">
+              <div class="card-body">
+                <h5 class="card-title">Flujo Semanal de Carga</h5>
+                <canvas id="weeklyChart" height="80"></canvas>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="row">
-        <div class="col-12">
-          <div class="card p-3">
-            <h5>Módulo de Flota</h5>
-            <div id="fleetList" class="row"></div>
+    <!-- Tracking Section -->
+    <section class="tracking-section bg-light" id="seguimiento">
+      <div class="container-fluid">
+        <h2 class="section-title">SEGUIMIENTO DE ÓRDENES</h2>
+        
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card tracking-card">
+              <div class="card-body">
+                <div class="search-group mb-3">
+                  <input id="searchInput" class="form-control search-input" placeholder="Buscar por número de guía o cliente" />
+                  <button id="searchBtn" class="btn btn-search-secondary">BUSCAR</button>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-hover tracking-table" id="shipmentsTable">
+                    <thead>
+                      <tr>
+                        <th>Número de Guía</th>
+                        <th>Cliente</th>
+                        <th>Conductor</th>
+                        <th>Estado Actual</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
+    <!-- Fleet Section -->
+    <section class="fleet-section" id="flota">
+      <div class="container-fluid">
+        <h2 class="section-title">MÓDULO DE FLOTA</h2>
+        
+        <div class="row">
+          <div class="col-12">
+            <div class="card fleet-card">
+              <div class="card-body">
+                <div class="row" id="fleetList">
+                  <!-- fleet drivers dynamically injected -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-corporate" id="contacto">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-4">
+            <h6>CONTACTO</h6>
+            <p>📧 administrativo@superlogistica.site<br>📞 +3218045564</p>
+          </div>
+          <div class="col-md-4">
+            <h6>HORARIO</h6>
+            <p>Lun - Vie: 8:00 - 18:00<br>Sábado: 9:00 - 13:00</p>
+          </div>
+          <div class="col-md-4">
+            <h6>SÍGUENOS</h6>
+            <p><a href="#"><i class="fab fa-instagram"></i></a> <a href="#"><i class="fab fa-facebook"></i></a> <a href="#"><i class="fab fa-linkedin"></i></a></p>
+          </div>
+        </div>
+        <hr>
+        <p class="text-center text-muted">© 2026 SUPER LOGIS CTG. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/app.js"></script>
   </body>
 </html>
