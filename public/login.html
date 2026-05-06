@@ -314,6 +314,14 @@
       setTimeout(() => alert.remove(), 5000);
     }
 
+    function redirectAfterLogin(user) {
+      if (user.role === 'admin') {
+        window.location.href = '/admin.html';
+      } else {
+        window.location.href = '/index.html';
+      }
+    }
+
     // Login Form
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -331,7 +339,7 @@
         if (data.success) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
-          window.location.href = '/dashboard.html';
+          redirectAfterLogin(data.user);
         } else {
           showAlert(data.message, 'danger');
         }
@@ -412,7 +420,7 @@
           localStorage.setItem('user', JSON.stringify(completeData.user));
           showAlert('¡Bienvenido! Redirigiendo...', 'success');
           setTimeout(() => {
-            window.location.href = '/dashboard.html';
+            redirectAfterLogin(completeData.user);
           }, 1500);
         } else {
           showAlert(completeData.message, 'danger');
