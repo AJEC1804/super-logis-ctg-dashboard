@@ -1,0 +1,25 @@
+<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="#0099cc" opacity="0.1" stroke="#0099cc" stroke-width="1"/>
+  
+  <!-- "S" shape in black -->
+  <path d="M 35 30 Q 25 30 25 38 Q 25 45 35 47 Q 45 49 45 55 Q 45 62 35 62 Q 25 62 25 58" 
+        fill="none" stroke="#000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- "L" shape in blue -->
+  <path d="M 55 28 L 55 62 M 55 62 L 68 62" 
+        fill="none" stroke="#0099cc" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Text: SL -->
+  <text x="100" y="65" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#0b2b45">
+    SL
+  </text>
+  
+  <!-- Text: GESTORES LOGÍSTICOS -->
+  <text x="100" y="32" font-family="Arial, sans-serif" font-size="10" fill="#666" letter-spacing="1">
+    GESTORES
+  </text>
+  <text x="100" y="48" font-family="Arial, sans-serif" font-size="10" fill="#0099cc" font-weight="bold" letter-spacing="1">
+    LOGÍSTICOS
+  </text>
+</svg>
