@@ -1,0 +1,7 @@
+node_modules/
+data.db
+public/assets/logo.png
+.env
+.DS_Store
+npm-debug.log
+coverage/

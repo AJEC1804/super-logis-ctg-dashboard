@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SUPER LOGIS CTG - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="bg-light">
+    <nav class="navbar navbar-expand-lg" style="background:#0b2b45;color:#fff;">
+      <div class="container-fluid">
+        <a class="navbar-brand text-white d-flex align-items-center" href="#">
+          <img src="/assets/logo.png" alt="SUPER LOGIS CTG" style="height:40px;margin-right:10px;object-fit:contain"> 
+          <span>SUPER LOGIS CTG</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="container my-4">
+      <div class="row mb-3">
+        <div class="col-md-8">
+          <div class="card p-3">
+            <h5>Panel de Control</h5>
+            <div class="row text-center mt-3" id="metricsRow">
+              <!-- metrics cards here -->
+            </div>
+            <canvas id="weeklyChart" class="mt-3" height="100"></canvas>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3">
+            <h6>Acciones</h6>
+            <p class="small">Usa la tabla de Seguimiento para buscar por guía y actualizar estados.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card p-3 mb-3">
+            <h5>Seguimiento de Órdenes</h5>
+            <div class="mb-2 d-flex">
+              <input id="searchInput" class="form-control me-2" placeholder="Buscar por número de guía o cliente" />
+              <button id="searchBtn" class="btn btn-primary">Buscar</button>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped" id="shipmentsTable">
+                <thead>
+                  <tr>
+                    <th>Guía</th>
+                    <th>Cliente</th>
+                    <th>Conductor</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card p-3">
+            <h5>Módulo de Flota</h5>
+            <div id="fleetList" class="row"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

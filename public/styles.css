@@ -1,0 +1,4 @@
+:root{--blue:#0b2b45;--gray:#6c757d;--white:#ffffff}
+body{font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+.metric-card{background:var(--white);border-radius:8px;border:1px solid #e6e9ee}
+.driver-card{background:#fff;border-radius:6px;padding:10px;border:1px solid #e9ecef}
