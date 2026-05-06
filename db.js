@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const dataPath = path.join(__dirname, 'data.json');
+const dataPath = process.env.VERCEL ? path.join('/tmp', 'data.json') : path.join(__dirname, 'data.json');
 
 function defaultData() {
   const now = new Date().toISOString();

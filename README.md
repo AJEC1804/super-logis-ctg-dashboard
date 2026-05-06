@@ -33,6 +33,10 @@ Subida a repositorio y despliegue:
 
 Integración siguiente con Google AI Studio:
 - Cree un proyecto en Google Cloud y guarde credenciales para futuras integraciones. Vea `PUSH_TO_GITHUB.md`.
+
+Deploy en Vercel:
+- Este repositorio incluye `vercel.json` para publicar `server.js` como función Node.
+- En Vercel, el almacenamiento local es temporal; la persistencia final debe ir en Firestore.
 - Panel con métricas y gráfico (Chart.js)
 - Tabla de seguimiento con búsqueda y cambio de estado
 - Simulación de envío de email cuando pasa a `En Tránsito`
