@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel - SUPER LOGIS CTG</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-corporate">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="#dashboard">
+        <img src="/assets/logo.svg" alt="SUPER LOGIS CTG" class="logo-navbar" style="width: 50px; height: 50px;"> 
+        <span class="brand-text">ADMIN PANEL</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#users">USUARIOS</a></li>
+          <li class="nav-item"><a class="nav-link" href="#email">CORREOS</a></li>
+          <li class="nav-item"><a class="nav-link" href="#dashboard">DASHBOARD</a></li>
+          <li class="nav-item"><a class="nav-link btn-contacto" href="#" onclick="logout()">CERRAR SESIÓN</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Users Section -->
+  <section class="dashboard-section" id="users">
+    <div class="container-fluid">
+      <h2 class="section-title">GESTIÓN DE USUARIOS</h2>
+      
+      <div class="row">
+        <div class="col-12">
+          <div class="card tracking-card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover tracking-table" id="usersTable">
+                  <thead>
+                    <tr>
+                      <th>Email</th>
+                      <th>Nombre</th>
+                      <th>Rol</th>
+                      <th>Estado</th>
+                      <th>Verificado</th>
+                      <th>Fecha Registro</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Email Section -->
+  <section class="fleet-section" id="email">
+    <div class="container-fluid">
+      <h2 class="section-title">ENVÍO DE CORREOS MASIVOS</h2>
+      
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="card fleet-card">
+            <div class="card-body">
+              <form id="bulkEmailForm">
+                <div class="form-group mb-3">
+                  <label class="form-label" for="emailSubject">Asunto</label>
+                  <input type="text" class="form-control" id="emailSubject" placeholder="Asunto del correo" required>
+                </div>
+
+                <div class="form-group mb-3">
+                  <label class="form-label" for="emailTo">Destinatarios (correos separados por coma)</label>
+                  <textarea class="form-control" id="emailTo" rows="4" placeholder="usuario1@correo.com, usuario2@correo.com" required></textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                  <label class="form-label" for="emailContent">Contenido HTML</label>
+                  <div id="htmlEditor" style="height: 300px; border: 1px solid #ddd; border-radius: 8px; padding: 10px; font-family: monospace; overflow-y: auto;"></div>
+                  <textarea id="emailContentHidden" style="display: none;"></textarea>
+                </div>
+
+                <div class="alert alert-info">
+                  <strong>Plantillas disponibles:</strong>
+                  <button type="button" class="btn btn-sm btn-outline-primary" onclick="insertTemplate('promo')">Promo</button>
+                  <button type="button" class="btn btn-sm btn-outline-primary" onclick="insertTemplate('update')">Actualización</button>
+                  <button type="button" class="btn btn-sm btn-outline-primary" onclick="insertTemplate('alert')">Alerta</button>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="fas fa-paper-plane"></i> Enviar Correos
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card fleet-card">
+            <div class="card-body">
+              <h5 class="card-title">Preview</h5>
+              <div id="emailPreview" style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; height: 400px; overflow-y: auto; background: white;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard Section -->
+  <section class="dashboard-section" id="dashboard">
+    <div class="container-fluid">
+      <h2 class="section-title">PANEL DE CONTROL</h2>
+      
+      <div class="row mb-4" id="metricsRow">
+        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+          <div class="metric-card">
+            <div class="text-muted">Usuarios Registrados</div>
+            <div class="h4" id="totalUsers">0</div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+          <div class="metric-card">
+            <div class="text-muted">Clientes</div>
+            <div class="h4" id="totalClients">0</div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+          <div class="metric-card">
+            <div class="text-muted">Empleados</div>
+            <div class="h4" id="totalEmployees">0</div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+          <div class="metric-card">
+            <div class="text-muted">Verificados</div>
+            <div class="h4" id="totalVerified">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer-corporate">
+    <div class="container-fluid">
+      <div class="text-center">
+        <p>© 2026 SUPER LOGIS CTG. Panel de Administrador.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let allUsers = [];
+
+    // Check authentication
+    function checkAuth() {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      if (!token || user.role !== 'admin') {
+        window.location.href = '/login.html';
+      }
+    }
+
+    // Load users
+    async function loadUsers() {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch('/api/admin/users', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        allUsers = data;
+        renderUsers();
+        updateMetrics();
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+
+    function renderUsers() {
+      const tbody = document.querySelector('#usersTable tbody');
+      tbody.innerHTML = '';
+      
+      allUsers.forEach(user => {
+        const tr = document.createElement('tr');
+        const badge = user.verified ? '<span class="badge bg-success">Verificado</span>' : '<span class="badge bg-warning">Pendiente</span>';
+        tr.innerHTML = `
+          <td><strong>${user.email}</strong></td>
+          <td>${user.name}</td>
+          <td><span class="badge bg-primary">${user.role}</span></td>
+          <td><span class="badge bg-info">${user.status}</span></td>
+          <td>${badge}</td>
+          <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateMetrics() {
+      document.getElementById('totalUsers').textContent = allUsers.length;
+      document.getElementById('totalClients').textContent = allUsers.filter(u => u.role === 'user').length;
+      document.getElementById('totalEmployees').textContent = allUsers.filter(u => u.role === 'employee').length;
+      document.getElementById('totalVerified').textContent = allUsers.filter(u => u.verified).length;
+    }
+
+    // Bulk Email Form
+    document.getElementById('bulkEmailForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = localStorage.getItem('token');
+      const subject = document.getElementById('emailSubject').value;
+      const to = document.getElementById('emailTo').value;
+      const htmlContent = document.getElementById('emailContentHidden').value;
+
+      const recipients = to.split(',').map(e => e.trim()).filter(e => e);
+
+      if (recipients.length === 0 || !subject || !htmlContent) {
+        alert('Completa todos los campos');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/email/send-bulk', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ recipients, subject, htmlContent })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          alert('Correos enviados exitosamente');
+          document.getElementById('bulkEmailForm').reset();
+        } else {
+          alert('Error: ' + data.error);
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    });
+
+    // Templates
+    const templates = {
+      promo: `<h2 style="color: #0b2b45;">🎉 ¡Oferta Especial!</h2>
+<p>Disfruta de descuentos exclusivos en nuestros servicios.</p>`,
+      update: `<h2 style="color: #0b2b45;">📢 Actualización Importante</h2>
+<p>Hemos mejorado nuestros servicios para brindarte mejor experiencia.</p>`,
+      alert: `<h2 style="color: #0b2b45;">⚠️ Alerta</h2>
+<p>Se han detectado cambios en tu cuenta. Revisa tu actividad.</p>`
+    };
+
+    function insertTemplate(type) {
+      const content = templates[type] || '';
+      document.getElementById('emailContentHidden').value = content;
+      document.getElementById('emailPreview').innerHTML = content;
+    }
+
+    // Preview
+    document.getElementById('emailContentHidden').addEventListener('input', () => {
+      document.getElementById('emailPreview').innerHTML = document.getElementById('emailContentHidden').value;
+    });
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login.html';
+    }
+
+    // Initialize
+    checkAuth();
+    loadUsers();
+  </script>
+</body>
+</html>

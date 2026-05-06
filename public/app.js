@@ -3,6 +3,32 @@ async function fetchJSON(url, opts) {
   return r.json();
 }
 
+// Check authentication
+function checkAuth() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = '/login.html';
+    return false;
+  }
+  
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  
+  // Show admin link if user is admin
+  if (user.role === 'admin') {
+    const adminLink = document.getElementById('adminLink');
+    if (adminLink) adminLink.style.display = 'block';
+  }
+  
+  return true;
+}
+
+// Logout function
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/login.html';
+}
+
 function createMetricCard(title, value) {
   return `<div class="col-12 col-sm-6 col-lg-3 mb-3"><div class="metric-card"><div class="text-muted">${title}</div><div class="h4">${value}</div></div></div>`;
 }
@@ -176,6 +202,7 @@ document.getElementById('searchTrackingInput').addEventListener('keypress', (e) 
 });
 
 window.addEventListener('load', () => {
+  if (!checkAuth()) return;
   loadMetrics();
   renderChart();
   loadShipments();
