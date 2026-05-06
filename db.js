@@ -1,93 +1,102 @@
-const Database = require('better-sqlite3');
+const fs = require('fs');
 const path = require('path');
-const db = new Database(path.join(__dirname, 'data.db'));
 
-function init() {
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS clients (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT,
-      email TEXT,
-      phone TEXT
-    );
-    CREATE TABLE IF NOT EXISTS drivers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT,
-      plate TEXT,
-      lat REAL,
-      lng REAL
-    );
-    CREATE TABLE IF NOT EXISTS shipments (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      tracking_number TEXT,
-      client_id INTEGER,
-      driver_id INTEGER,
-      status TEXT,
-      origin TEXT,
-      destination TEXT,
-      created_at TEXT
-    );
-  `);
+const dataPath = path.join(__dirname, 'data.json');
 
-  // seed if empty
-  const row = db.prepare('SELECT COUNT(*) as c FROM shipments').get();
-  if (row.c === 0) seed();
+function defaultData() {
+  const now = new Date().toISOString();
+  return {
+    clients: [
+      { id: 1, name: 'Empresa A', email: 'clienteA@example.com', phone: '+5600000001' },
+      { id: 2, name: 'Empresa B', email: 'clienteB@example.com', phone: '+5600000002' }
+    ],
+    drivers: [
+      { id: 1, name: 'Carlos Pérez', plate: 'ABC-123', lat: -33.45, lng: -70.66 },
+      { id: 2, name: 'María Gómez', plate: 'XYZ-987', lat: -33.46, lng: -70.65 }
+    ],
+    shipments: [
+      { id: 1, tracking_number: 'SLCTG-0001', client_id: 1, driver_id: 1, status: 'En Puerto', origin: 'Puerto de CTG', destination: 'Bodega Central', created_at: now },
+      { id: 2, tracking_number: 'SLCTG-0002', client_id: 2, driver_id: 2, status: 'En Tránsito', origin: 'Bodega Central', destination: 'Cliente B', created_at: now },
+      { id: 3, tracking_number: 'SLCTG-0003', client_id: 1, driver_id: 2, status: 'Entregado', origin: 'Puerto X', destination: 'Cliente A', created_at: now }
+    ]
+  };
 }
 
-function seed() {
-  const insertClient = db.prepare('INSERT INTO clients (name,email,phone) VALUES (?,?,?)');
-  const insertDriver = db.prepare('INSERT INTO drivers (name,plate,lat,lng) VALUES (?,?,?,?)');
-  const insertShipment = db.prepare('INSERT INTO shipments (tracking_number,client_id,driver_id,status,origin,destination,created_at) VALUES (?,?,?,?,?,?,?)');
+function loadData() {
+  if (!fs.existsSync(dataPath)) {
+    const initial = defaultData();
+    fs.writeFileSync(dataPath, JSON.stringify(initial, null, 2));
+    return initial;
+  }
 
-  const c1 = insertClient.run('Empresa A','clienteA@example.com','+5600000001').lastInsertRowid;
-  const c2 = insertClient.run('Empresa B','clienteB@example.com','+5600000002').lastInsertRowid;
+  return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+}
 
-  const d1 = insertDriver.run('Carlos Pérez','ABC-123',-33.45,-70.66).lastInsertRowid;
-  const d2 = insertDriver.run('María Gómez','XYZ-987',-33.46,-70.65).lastInsertRowid;
-
-  const now = new Date().toISOString();
-  insertShipment.run('SLCTG-0001', c1, d1, 'En Puerto', 'Puerto de CTG','Bodega Central', now);
-  insertShipment.run('SLCTG-0002', c2, d2, 'En Tránsito', 'Bodega Central','Cliente B', now);
-  insertShipment.run('SLCTG-0003', c1, d2, 'Entregado', 'Puerto X','Cliente A', now);
+function saveData(data) {
+  fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
 }
 
 function getMetrics() {
-  const active = db.prepare("SELECT COUNT(*) as c FROM shipments WHERE status != 'Entregado'").get().c;
-  const deliveredToday = db.prepare("SELECT COUNT(*) as c FROM shipments WHERE status = 'Entregado' AND date(created_at) = date('now')").get().c;
-  const driversAvailable = db.prepare("SELECT COUNT(*) as c FROM drivers").get().c;
-  const alerts = db.prepare("SELECT COUNT(*) as c FROM shipments WHERE status = 'En Tránsito' AND julianday('now') - julianday(created_at) > 3").get().c;
+  const data = loadData();
+  const active = data.shipments.filter((shipment) => shipment.status !== 'Entregado').length;
+  const deliveredToday = data.shipments.filter((shipment) => shipment.status === 'Entregado').length;
+  const driversAvailable = data.drivers.length;
+  const alerts = data.shipments.some((shipment) => shipment.status === 'En Tránsito') ? 1 : 0;
   return { active, deliveredToday, driversAvailable, alerts };
 }
 
 function getShipments(q) {
-  if (!q) return db.prepare('SELECT s.*, c.name as client_name, d.name as driver_name FROM shipments s LEFT JOIN clients c ON c.id=s.client_id LEFT JOIN drivers d ON d.id=s.driver_id ORDER BY s.id DESC').all();
-  const like = `%${q}%`;
-  return db.prepare("SELECT s.*, c.name as client_name, d.name as driver_name FROM shipments s LEFT JOIN clients c ON c.id=s.client_id LEFT JOIN drivers d ON d.id=s.driver_id WHERE s.tracking_number LIKE ? OR c.name LIKE ? ORDER BY s.id DESC").all(like, like);
+  const data = loadData();
+  const shipments = data.shipments.map((shipment) => {
+    const client = data.clients.find((item) => item.id === shipment.client_id);
+    const driver = data.drivers.find((item) => item.id === shipment.driver_id);
+    return {
+      ...shipment,
+      client_name: client ? client.name : '',
+      driver_name: driver ? driver.name : ''
+    };
+  });
+
+  if (!q) {
+    return shipments.sort((a, b) => b.id - a.id);
+  }
+
+  const query = q.toLowerCase();
+  return shipments
+    .filter((shipment) => shipment.tracking_number.toLowerCase().includes(query) || shipment.client_name.toLowerCase().includes(query))
+    .sort((a, b) => b.id - a.id);
 }
 
 function getShipmentById(id) {
-  return db.prepare('SELECT * FROM shipments WHERE id = ?').get(id);
+  const data = loadData();
+  return data.shipments.find((shipment) => shipment.id === id) || null;
 }
 
 function updateShipmentStatus(id, status) {
-  const s = getShipmentById(id);
-  if (!s) return null;
-  db.prepare('UPDATE shipments SET status = ? WHERE id = ?').run(status, id);
-  return db.prepare('SELECT s.*, c.name as client_name FROM shipments s LEFT JOIN clients c ON c.id=s.client_id WHERE s.id = ?').get(id);
+  const data = loadData();
+  const shipment = data.shipments.find((item) => item.id === id);
+  if (!shipment) return null;
+
+  shipment.status = status;
+  saveData(data);
+
+  const client = data.clients.find((item) => item.id === shipment.client_id);
+  return {
+    ...shipment,
+    client_name: client ? client.name : ''
+  };
 }
 
 function getDrivers() {
-  return db.prepare('SELECT * FROM drivers').all();
+  return loadData().drivers;
 }
 
 function getClients() {
-  return db.prepare('SELECT * FROM clients').all();
+  return loadData().clients;
 }
 
 function getClientById(id) {
-  return db.prepare('SELECT * FROM clients WHERE id = ?').get(id);
+  return loadData().clients.find((client) => client.id === id) || null;
 }
-
-init();
 
 module.exports = { getMetrics, getShipments, updateShipmentStatus, getDrivers, getClients, getShipmentById, getClientById };
